@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../slices/userApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
- import Loader from "../components/loader";
+import Loader from "../components/loader";
+
 
 const login = () => {
   const [email, setEmail] = useState("");
@@ -22,22 +23,29 @@ const login = () => {
       navigate("/");     
     }
   }, [navigate, userInfo]);
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      navigate("/");
-    } catch (error) {
-       toast.error(err?.data?.message || err.error);
-    }
-  };
+ const submitHandler = async (e) => {
+   e.preventDefault();
+
+   if (!email || !password) {
+     toast.error("Both email and password are required.");
+   } else {
+     try {
+       const res = await login({ email, password }).unwrap();
+       dispatch(setCredentials({ ...res }));
+       navigate("/");
+     } catch (error) {
+       toast.error(error?.data?.message || error.error);
+     }
+   }
+ };
   return (
-    <FormContainer>
-      <h1>Sign in</h1>
+    <FormContainer >
+    
+      <h1 style={{ fontFamily: "sans-serif" }}>Sign in</h1>
+      
       <Form onSubmit={submitHandler}>
         <Form.Group className="my-2" controlId="email">
-          <Form.Label>email</Form.Label>
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type="email"
             placeholder="Enter email"
@@ -46,7 +54,7 @@ const login = () => {
           ></Form.Control>
         </Form.Group>
         <Form.Group className="my-2" controlId="password">
-          <Form.Label>password</Form.Label>
+          <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Enter Password"
@@ -55,13 +63,13 @@ const login = () => {
           ></Form.Control>
         </Form.Group>
 
-        {isLoading &&<Loader></Loader>}
+        {isLoading && <Loader></Loader>}
         <Button type="submit" varient="primary" className="mt-3">
-          sign in
+          Sign in
         </Button>
         <Row className="py-3">
           <Col>
-            new Customer? <Link to="/register">register</Link>
+            New Customer? <Link to="/register">Register</Link>
           </Col>
         </Row>
       </Form>

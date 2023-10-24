@@ -8,6 +8,8 @@ import {
 } from "../Controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
+import { multerUploadUserProfile } from "../config/multer.js";
+
 const router = express.Router();
 router.post("/auth", authUser);
 router.post("/", registerUser);
@@ -15,6 +17,6 @@ router.post("/logout", logout);
 router
   .route("/profile")
   .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
+  .put(protect, multerUploadUserProfile.single('profileImage'),updateUserProfile);
 
-export default router;
+  export default router;

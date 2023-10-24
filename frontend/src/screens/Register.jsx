@@ -24,28 +24,33 @@ const Register = () => {
        }
      }, [navigate, userInfo]);
  
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    if(password!==confirmPassword){
-      toast.error('password no match')
-    }else{
-      try {
-        const res = await login({ name,email, password }).unwrap();
-        dispatch(setCredentials({ ...res }));
-        navigate("/");
-        
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
-        
-      }
+ const submitHandler = async (e) => {
+  e.preventDefault();
+
+  if (password !== confirmPassword) {
+    toast.error('Passwords do not match');
+  } else if (email === '' || name === '' || password === '' || confirmPassword === '') {
+    if (email === '') toast.error('Email is required');
+    if (name === '') toast.error('Name is required');
+    if (password === '') toast.error('Password is required');
+    if (confirmPassword === '') toast.error('Confirm Password is required');
+  } else {
+    try {
+      const res = await login({ name, email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate('/');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
     }
-  };
+  }
+};
+
   return (
     <FormContainer>
-      <h1>sign Up</h1>
+      <h1 style={{fontFamily:"sans-serif"}}>Sign Up</h1>
       <Form onSubmit={submitHandler}>
         <Form.Group className="my-2" controlId="name">
-          <Form.Label>name</Form.Label>
+          <Form.Label>Name</Form.Label>
           <Form.Control
             type="text"
             placeholder="Enter name"
@@ -54,7 +59,7 @@ const Register = () => {
           ></Form.Control>
         </Form.Group>
         <Form.Group className="my-2" controlId="email">
-          <Form.Label>email</Form.Label>
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type="email"
             placeholder="Enter email"
@@ -63,7 +68,7 @@ const Register = () => {
           ></Form.Control>
         </Form.Group>
         <Form.Group className="my-2" controlId="password">
-          <Form.Label>password</Form.Label>
+          <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Enter Password"
@@ -72,7 +77,7 @@ const Register = () => {
           ></Form.Control>
         </Form.Group>
         <Form.Group className="my-2" controlId="confirmPassword">
-          <Form.Label>confirm password</Form.Label>
+          <Form.Label>Confirm password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Confirm Password"
@@ -82,11 +87,11 @@ const Register = () => {
         </Form.Group>
         {isLoading && <Loader></Loader>} 
         <Button type="submit" varient="primary" className="mt-3">
-          sign in
+          Register
         </Button>
         <Row className="py-3">
           <Col>
-            Already have a account? <Link to="/login">register</Link>
+            Already have a account? <Link to="/login">sign in</Link>
           </Col>
         </Row>
       </Form>

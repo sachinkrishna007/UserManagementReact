@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+  import bcrypt from "bcrypt";
 
 const userSchema = mongoose.Schema(
   {
@@ -16,9 +16,13 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    profileImageName:{
-      type:String
-    }
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    profileImageName: {
+      type: String,
+    },
   },
   {
     timestamps: true,

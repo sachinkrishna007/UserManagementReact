@@ -1,79 +1,66 @@
-import { useState, useEffect } from "react";
-// import { Link, useNavigate } from 'react-router-dom';
-import { Form, Button } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import FormContainer from "../components/FormContainer";
-import { toast } from "react-toastify";
-import Loader from "../components/loader";
-import { useUpdateUserMutation } from "../slices/userApiSlice";
-import { setCredentials } from "../slices/authSlice";
+import { Container, Card, Button } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 
-const ProfileScreen = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [profilePicture, setProfilePicture] = useState(null); // Store the selected file
+import { useSelector } from "react-redux";
 
-  const dispatch = useDispatch();
+import { PROFILE_IMAGE_DIR_PATH } from "../utils/constants";
 
+const Hero = () => {
   const { userInfo } = useSelector((state) => state.auth);
+  console.log("userInfo:", userInfo); // Debugging line
 
-  const [updateProfile, { isLoading }] = useUpdateUserMutation();
-
-  useEffect(() => {
-    setName(userInfo.name);
-    setEmail(userInfo.email);
-  }, [userInfo.email, userInfo.name]);
-
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-    } else {
-      try {
-        const res = await updateProfile({
-          _id: userInfo._id,
-          name,
-          email,
-          password,
-        }).unwrap();
-        console.log(res);
-        dispatch(setCredentials(res));
-        toast.success("Profile updated successfully");
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
-      }
-    }
-  };
   return (
-    <FormContainer>
-      <h1>Profile</h1>
-
-      <Form onSubmit={submitHandler}>
-        <Form.Group className="my-2" controlId="name">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="name"
-            placeholder="Enter name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-        <Form.Group className="my-2" controlId="email">
-          <Form.Label>Email Address</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
-
-        {isLoading && <Loader />}
-      </Form>
-    </FormContainer>
+    <div className=" py-5">
+     
+      <Container className="d-flex justify-content-center">
+        <Card className="p-5 d-flex flex-column align-items-center hero-card bg-light w-75">
+          {userInfo ? (
+            <>
+              {userInfo.profileImageName && (
+                <img
+                  src={PROFILE_IMAGE_DIR_PATH + userInfo.profileImageName}
+                  alt={userInfo.name}
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
+              )}
+              <h2 className="text-center mb-4">
+                {" "}
+                Welcome back {userInfo.name}{" "}
+              </h2>
+              <p className="text-center mb-4"> Email: {userInfo.email} </p>
+              <div className="d-flex">
+                <LinkContainer to="/profile">
+                  <Button variant="primary" className="me-3">
+                    Manage Profile
+                  </Button>
+                </LinkContainer>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-center mb-4"> User </h2>
+              <p className="text-center mb-4">
+                {" "}
+                Please Login to access User Dashboard{" "}
+              </p>
+              <div className="d-flex">
+                <LinkContainer to="/login">
+                  <Button variant="primary" className="me-3">
+                    Login
+                  </Button>
+                </LinkContainer>
+              </div>
+            </>
+          )}
+        </Card>
+      </Container>
+    </div>
   );
 };
 
-export default ProfileScreen;
+export default Hero;
